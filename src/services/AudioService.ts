@@ -6,26 +6,37 @@ export class AudioService {
     inputPath: string,
     outputPath: string,
     speed: number = 1.0,
+    modifyAudioPitch: boolean = false,
   ): Promise<void> {
     return new Promise((resolve, reject) => {
-      // FFmpeg 'atempo' filter only supports values between 0.5 and 2.0
-      if (speed < 0.5 || speed > 2.0) {
+      // Validação de limite para o filtro 'atempo'
+      if (!modifyAudioPitch && (speed < 0.5 || speed > 2.0)) {
         return reject(
-          new Error("Speed multiplier must be between 0.5 and 2.0"),
+          new Error(
+            "Speed multiplier must be between 0.5 and 2.0 when not modifying pitch",
+          ),
         );
       }
 
+      let filterChain: string;
+
+      if (modifyAudioPitch) {
+        const baseSampleRate = 44100;
+        const newRate = Math.round(baseSampleRate * speed);
+        filterChain = `asetrate=${newRate},aresample=${baseSampleRate}`;
+      } else {
+        filterChain = `atempo=${speed}`;
+      }
+
       ffmpeg(inputPath)
-        // Set format to mp3 for high compression
         .toFormat("mp3")
-        // Use libmp3lame encoder for better quality/compatibility
         .audioCodec("libmp3lame")
-        // 192kbps is the osu! standard for good quality at a small size
         .audioBitrate("192k")
-        // Apply the time-stretch filter
-        .audioFilters(`atempo=${speed}`)
+        .audioFilters(filterChain) // Aplica o filtro dinâmico
         .on("start", (cmd) =>
-          Logger.info(`FFmpeg (Speed ${speed}x) initialized: ${cmd}`),
+          Logger.info(
+            `FFmpeg (${modifyAudioPitch ? "Pitch+Speed" : "Speed Only"} ${speed}x) initialized: ${cmd}`,
+          ),
         )
         .on("error", (err) => {
           Logger.error(`Error during audio rate change`, err);
@@ -33,7 +44,7 @@ export class AudioService {
         })
         .on("end", () => {
           Logger.success(
-            `Audio rate changed successfully: ${speed}x (MP3 192kbps)`,
+            `Audio processed successfully: ${speed}x (${modifyAudioPitch ? "Pitch modified" : "Pitch preserved"})`,
           );
           resolve();
         })

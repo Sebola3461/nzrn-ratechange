@@ -55,6 +55,7 @@ export class RateChangeService {
       this.audioPath,
       audioOutputPath,
       this.rate,
+      this.options?.modifyAudioPitch,
     );
 
     // 2. Copy Background (New Step)

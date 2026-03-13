@@ -52,6 +52,7 @@ export class RateChangeCommand extends ChatCommand {
       const options = {
         scaleAr: !args.includes("-noscalear"),
         scaleOd: !args.includes("-noscaleod"),
+        modifyAudioPitch: !args.includes("-pitch"),
       };
 
       const rateInput = args[0];
