@@ -1,0 +1,8 @@
+.env
+node_modules
+temp
+dist
+cache.db
+cache.db-shm
+cache.db-wal
+cache.sqbpro
