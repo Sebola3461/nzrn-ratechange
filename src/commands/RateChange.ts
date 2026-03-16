@@ -38,12 +38,6 @@ export class RateChangeCommand extends ChatCommand {
           "Send /np again because i can't find that beatmapsetId",
         );
 
-      pm.user.sendMessage(`Please wait while i do my magic...`);
-
-      packedPath = await BeatmapDownloader.download(latestNp.beatmapset_id);
-      unpackedPath = `temp/sets/${latestNp.beatmapset_id}`;
-
-      await OszPacker.unpack(packedPath, unpackedPath);
       const osuFile = await BeatmapDownloader.osuFile(latestNp.beatmap_id!);
 
       const decoder = new BeatmapDecoder();
@@ -68,6 +62,13 @@ export class RateChangeCommand extends ChatCommand {
           "Rate must be >= 0.5x and <= 2.0x or a bpm value !ratechange 180bpm or !ratechange 1.2x",
         );
       }
+
+      pm.user.sendMessage(`Please wait while i do my magic...`);
+
+      packedPath = await BeatmapDownloader.download(latestNp.beatmapset_id);
+      unpackedPath = `temp/sets/${latestNp.beatmapset_id}`;
+
+      await OszPacker.unpack(packedPath, unpackedPath);
 
       Logger.info(`Initializing ratechange...`);
 
