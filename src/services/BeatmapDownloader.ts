@@ -4,7 +4,7 @@ import path from "path";
 import { Logger } from "../helpers/Logger";
 
 export class BeatmapDownloader {
-  private static readonly BASE_URL = "https://beatconnect.io/b"; // "https://api.nerinyan.moe/d"
+  private static readonly BASE_URL = "https://api.nerinyan.moe/d";
   private static readonly TEMP_DIR = path.resolve("./temp/downloads");
 
   static async download(beatmapsetId: string | number): Promise<string> {
