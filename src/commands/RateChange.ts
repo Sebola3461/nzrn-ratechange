@@ -57,7 +57,7 @@ export class RateChangeCommand extends ChatCommand {
           ? stats.value
           : this.getRateFromBpm(beatmap.bpm, stats.value);
 
-      if (sanitizedRate < 0.2 || sanitizedRate > 5.0 || sanitizedRate === 1) {
+      if (sanitizedRate < 0.2 || sanitizedRate > 2.0 || sanitizedRate === 1) {
         return pm.user.sendMessage(
           "Rate must be >= 0.5x and <= 2.0x or a bpm value !ratechange 180bpm or !ratechange 1.2x",
         );
@@ -100,7 +100,7 @@ export class RateChangeCommand extends ChatCommand {
       );
     } catch (err) {
       Logger.error("Erro no RateChangeCommand", err);
-      pm.user.sendMessage("Ocorreu um erro interno ao processar o mapa.");
+      pm.user.sendMessage(`Something happened: ${err}`);
 
       try {
         fs.unlinkSync(packedPath);
